@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QueueClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject.controller</a> &gt; <span class="el_source">QueueClass.java</span></div><h1>QueueClass.java</h1><pre class="source lang-java linenums">package com.example.RedisProject.controller;
+import com.example.RedisProject.model.UserRequestDto;
+import com.example.RedisProject.Service.QueueInterface;
+import com.example.RedisProject.model.Converter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import com.example.RedisProject.model.UserRequest;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
+import java.util.List;
+
+
+@RestController
+@RequestMapping(&quot;/queue&quot;)
+<span class="fc" id="L21">@Slf4j</span>
+public class QueueClass {
+  //  @Autowired
+    private final QueueInterface queueInterface;
+
+
+<span class="fc" id="L27">    public QueueClass( @Qualifier(&quot;customqueue&quot;)QueueSelector queuecustom, @Qualifier(&quot;rabbitq&quot;) QueueSelector queuerabbit,@Qualifier(&quot;convert&quot;) Converter converter,QueueInterface queueInterface) {</span>
+<span class="fc" id="L28">     this.converter=converter;</span>
+<span class="fc" id="L29">        this.queuecustom = queuecustom;</span>
+<span class="fc" id="L30">        this.queuerabbit = queuerabbit;</span>
+<span class="fc" id="L31">        this.queueInterface=queueInterface;</span>
+<span class="fc" id="L32">    }</span>
+
+    public void setQueuestring(String queuestring) {
+<span class="fc" id="L35">        this.queuestring = queuestring;</span>
+<span class="fc" id="L36">    }</span>
+
+    @Value(&quot;${dynamic.queue}&quot;)
+    private  String queuestring;
+//    @Autowired
+//    @Qualifier(&quot;customqueue&quot;)
+    private final QueueSelector queuecustom;
+//    @Autowired
+//    @Qualifier(&quot;rabbitq&quot;)
+    private final QueueSelector queuerabbit;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+//    @Autowired
+    private final Converter converter;
+
+
+    @GetMapping(&quot;/display&quot;)
+    public List&lt;UserRequestDto&gt; display() {
+<span class="fc" id="L55">        List&lt;UserRequest&gt; findAll = queueInterface.display();</span>
+<span class="fc" id="L56">        return converter.entityToDto(findAll);</span>
+    }
+
+    @GetMapping(&quot;/size&quot;)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public int size() {
+<span class="fc" id="L62">        int size = 0;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (queuestring.equalsIgnoreCase(&quot;rabbit&quot;)) {</span>
+<span class="fc" id="L64">            size = queuerabbit.size();</span>
+        } else {
+<span class="fc" id="L66">            size = queuecustom.size();</span>
+        }
+<span class="fc" id="L68">        return size;</span>
+    }
+
+    @PostMapping(value = &quot;/enque&quot;, produces = {MediaType.APPLICATION_JSON_VALUE})
+<span class="nc" id="L72">    @SneakyThrows</span>
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
+    public String enque(@Valid @RequestBody UserRequestDto userRequestDto) {
+     //   if (converter.checkDateAndName(userRequestDto)) {
+<span class="fc" id="L77">            UserRequest userRequest= converter.dtoToEntity(userRequestDto);</span>
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">            if (queuestring==null || queuestring.equalsIgnoreCase(&quot;custom&quot;)) {</span>
+<span class="fc" id="L79">                return    queuecustom.enque(userRequest);</span>
+            } else {
+<span class="fc" id="L81">                return    queuerabbit.enque(userRequest);</span>
+            }
+    }
+
+    @DeleteMapping(&quot;/deque&quot;)
+    public UserRequestDto deque() {
+<span class="fc" id="L87">        Object deque = null;</span>
+        try {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (queuestring.equalsIgnoreCase(&quot;rabbit&quot;)) {</span>
+<span class="fc" id="L90">                deque = queuerabbit.deque();</span>
+            } else {
+<span class="fc" id="L92">                deque = queuecustom.deque();</span>
+            }
+<span class="fc" id="L94">            return converter.entityToDto((UserRequest) deque);</span>
+<span class="nc" id="L95">        } catch (Exception e) {</span>
+<span class="nc" id="L96">            return new UserRequestDto();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

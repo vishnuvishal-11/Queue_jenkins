@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Implementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject.ServiceImpl</a> &gt; <span class="el_source">Implementation.java</span></div><h1>Implementation.java</h1><pre class="source lang-java linenums">package com.example.RedisProject.ServiceImpl;
+
+import com.example.RedisProject.Repository.UserRequestRepository;
+import com.example.RedisProject.Service.QueueInterface;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import java.util.ArrayList;
+import java.util.List;
+
+@Validated
+<span class="fc" id="L15">@Slf4j</span>
+@Service
+@Component
+public class Implementation&lt;T&gt; implements QueueInterface&lt;T&gt; {
+    @Autowired
+    private UserRequestRepository userRequestRepository;
+
+<span class="fc" id="L22">    private static int front = -1, rear = -1;</span>
+    List&lt;T&gt; arrli;
+
+
+<span class="fc" id="L26">    public Implementation() {</span>
+<span class="fc" id="L27">        arrli = new ArrayList();</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public synchronized void enque( T obj) {
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (obj != null) {</span>
+<span class="fc" id="L33">            rear++;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            if (rear == 0) front = 0;</span>
+<span class="fc" id="L35">            arrli.add(rear, obj);</span>
+           // userRequestRepository.save(((UserRequest) obj));
+        }
+
+<span class="fc" id="L39">    }</span>
+
+    @Override
+<span class="fc" id="L42">    public synchronized T deque() {  T obj = null;</span>
+<span class="fc" id="L43">        int temp1 = front;</span>
+        T temp2;
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">        if (rear == -1 || (arrli.get(rear) == null)) {</span>
+<span class="fc" id="L46">            return null;</span>
+        }
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (rear == front) {</span>
+<span class="fc" id="L50">            temp2 = arrli.get(front);</span>
+<span class="fc" id="L51">            arrli.set(front, null);</span>
+<span class="fc" id="L52">            rear = -1;</span>
+<span class="fc" id="L53">            front = -1;</span>
+          //  userRequestRepository.deleteById(((UserRequest) temp2).getId());
+//            obj = (T) (temp2).toString().replaceAll(&quot;null&quot;, &quot; &quot;)
+//                    .replaceAll(&quot;@0@&quot;, &quot;null&quot;).replaceAll(&quot;@&quot;, &quot; &quot;).trim();
+
+<span class="fc" id="L58">            return temp2;</span>
+        }
+<span class="fc" id="L60">        temp2 = arrli.get(front);</span>
+<span class="fc" id="L61">        front++;</span>
+<span class="fc" id="L62">        arrli.set(temp1, null);</span>
+       // userRequestRepository.deleteById(((UserRequest) temp2).getId());
+//        obj = (T) (temp2).toString().replaceAll(&quot;null&quot;, &quot; &quot;)
+//                .replaceAll(&quot;@0@&quot;, &quot;&quot;).replaceAll(&quot;@&quot;, &quot; &quot;).trim();
+
+<span class="fc" id="L67">        return temp2;</span>
+    }
+
+
+    @Override
+    public T peek() {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (rear &lt; 0) {</span>
+<span class="fc" id="L74">            return null;</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        } else if (arrli.get(rear) == null) return null;</span>
+        else
+<span class="fc" id="L77">            return (T) arrli.get(rear).toString().replaceAll(&quot;null&quot;, &quot;&quot;)</span>
+<span class="fc" id="L78">                    .replaceAll(&quot;@0@&quot;, &quot;&quot;).replaceAll(&quot;@&quot;, &quot; &quot;).trim();</span>
+    }
+
+    public int size() {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (rear == -1) return (0);</span>
+        else
+<span class="fc" id="L84">            return rear - front + 1;</span>
+    }
+
+<span class="nc" id="L87">    @SneakyThrows</span>
+    public List&lt;T&gt; display() {
+        int j;
+<span class="fc" id="L90">        List&lt;T&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        for (j = front; j &lt;= rear; j++) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            if (j != -1) {</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                if (arrli.get(j) != null) {</span>
+<span class="fc" id="L94">                    list.add(arrli.get(j));</span>
+//                             .replaceAll(&quot;null&quot;, &quot;&quot;)
+//                            .replaceAll(&quot;@0@&quot;, &quot;null&quot;).replaceAll(&quot;@&quot;, &quot; &quot;).trim());
+                }
+            }
+        }
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        //return gson.toJson(this);
+//        String jsonStr = gson.toJson(list);
+<span class="fc" id="L103">        return   list;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

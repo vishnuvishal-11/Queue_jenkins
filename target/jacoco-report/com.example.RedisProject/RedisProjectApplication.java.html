@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedisProjectApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject</a> &gt; <span class="el_source">RedisProjectApplication.java</span></div><h1>RedisProjectApplication.java</h1><pre class="source lang-java linenums">package com.example.RedisProject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import javax.annotation.PostConstruct;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+
+@SpringBootApplication(scanBasePackages ={&quot;com.example.RedisProject.*&quot;,&quot;com.example.RedisProject.Service&quot;,&quot;com.example.RedisProject.model&quot;})//, &quot;com.example.controller&quot;, &quot;com.example.Service&quot;, &quot;com.example.ServiceImpl&quot;, &quot;com.example.rabbitconfig&quot;, &quot;com.example.Redis&quot;, &quot;com.example.model&quot;, &quot;com.example.ipServices&quot;, &quot;com.example.security&quot;, &quot;com.example.CustomEndpoint&quot;,&quot;com.example.Repository&quot;})
+@EnableRedisRepositories
+@EnableAutoConfiguration
+@EnableJpaRepositories(basePackages=&quot;com.example.RedisProject.Repository&quot;)
+@EntityScan(basePackages=&quot;com.example.RedisProject.model&quot;)
+<span class="fc" id="L19">public class RedisProjectApplication {</span>
+    @Autowired
+    private ObjectMapper objectMapper;
+    public static void main(String[] args) {
+<span class="nc" id="L23">       SpringApplication.run(RedisProjectApplication.class, args);</span>
+
+<span class="nc" id="L25">    }</span>
+
+@PostConstruct
+    public void setUp() {
+<span class="fc" id="L29">        objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L30">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterSelector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject.Redis</a> &gt; <span class="el_source">FilterSelector.java</span></div><h1>FilterSelector.java</h1><pre class="source lang-java linenums">package com.example.RedisProject.Redis;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+
+@Configuration
+@Service
+<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L20">public class FilterSelector implements Filter {</span>
+
+    @Value(&quot;${dynamic.filter}&quot;)
+    String filter;
+    @Value(&quot;${services.service:#{enque}}&quot;)
+    String uri;
+    @Autowired
+    @Qualifier(&quot;custom&quot;)
+    FactoryInterface factoryInterface;
+    @Autowired
+    @Qualifier(&quot;cache&quot;)
+    FactoryInterface factoryInterfaceRedis;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+<span class="nc" id="L35">        Filter.super.init(filterConfig);</span>
+<span class="nc" id="L36">    }</span>
+<span class="nc" id="L37">    @SneakyThrows</span>
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+<span class="nc" id="L41">        HttpServletRequest httpServletRequest = (HttpServletRequest) request;</span>
+<span class="nc" id="L42">        HttpServletResponse httpServletResponse = (HttpServletResponse) response;</span>
+        try {
+<span class="nc" id="L44">            String methodUri = httpServletRequest.getRequestURI();</span>
+<span class="nc" id="L45">            String ip = null;</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (methodUri.equalsIgnoreCase(uri)) {</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">                if (request != null) {</span>
+<span class="nc" id="L48">                    ip = ((HttpServletRequest) request).getHeader(&quot;X-FORWARDED-FOR&quot;);</span>
+<span class="nc bnc" id="L49" title="All 4 branches missed.">                    if (ip == null || &quot;&quot;.equals(ip)) {</span>
+<span class="nc" id="L50">                        ip = request.getRemoteAddr();</span>
+                    }
+                }
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                if (filter.equalsIgnoreCase(&quot;cache&quot;))</span>
+<span class="nc" id="L54">                    factoryInterfaceRedis.filter(ip);</span>
+<span class="nc" id="L55">                else factoryInterface.filter(ip);</span>
+            }
+<span class="nc" id="L57">            chain.doFilter(request, response);</span>
+<span class="nc" id="L58">        } catch (RuntimeException e) {</span>
+<span class="nc" id="L59">            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());</span>
+<span class="nc" id="L60">        }</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public void destroy() {
+<span class="nc" id="L65">        Filter.super.destroy();</span>
+<span class="nc" id="L66">    }</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

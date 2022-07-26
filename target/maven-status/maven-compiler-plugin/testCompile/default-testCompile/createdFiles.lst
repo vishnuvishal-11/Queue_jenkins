@@ -1,0 +1,8 @@
+com\example\RedisProject\TestQueueImplementation.class
+com\example\RedisProject\TestController$MyTestConfig.class
+com\example\RedisProject\Config.class
+com\example\RedisProject\TestController.class
+com\example\RedisProject\TestCustomEndpoints.class
+com\example\RedisProject\TestRabbitQ$MyTestConfig.class
+com\example\RedisProject\RedisProjectApplicationTests.class
+com\example\RedisProject\TestRabbitQ.class

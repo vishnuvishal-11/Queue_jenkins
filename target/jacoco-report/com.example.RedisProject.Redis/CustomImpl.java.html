@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject.Redis</a> &gt; <span class="el_source">CustomImpl.java</span></div><h1>CustomImpl.java</h1><pre class="source lang-java linenums">package com.example.RedisProject.Redis;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import com.example.RedisProject.security.AccessList;
+import com.example.RedisProject.security.Counter;
+import java.util.*;
+
+<span class="fc" id="L10">@Slf4j</span>
+@Component(&quot;custom&quot;)
+public class CustomImpl implements FactoryInterface {
+    @Value(&quot;${ratelimit.count}&quot;)
+    int count;
+    @Value(&quot;${ratelimit.penalty.minutes}&quot;)
+    int penalty;
+   final  AccessList accessList;
+<span class="fc" id="L18">    public CustomImpl( AccessList accessList) {</span>
+<span class="fc" id="L19">        this.accessList = accessList;</span>
+<span class="fc" id="L20">    }</span>
+    @Override
+    public void filter(String ip) {
+<span class="nc" id="L23">        log.info(&quot;CustomFilter is Used....&quot;);</span>
+<span class="nc" id="L24">        accessList.getAccessHistory().computeIfPresent(ip, (CounterNumber, targetDate) -&gt; {</span>
+<span class="nc" id="L25">            Counter counter = accessList.getAccessHistory().get(ip);</span>
+<span class="nc bnc" id="L26" title="All 4 branches missed.">            if ((Calendar.getInstance().getTime().compareTo(counter.getTargetDate()) &gt;= 0 &amp;&amp; counter.getNumber() != count)) {</span>
+<span class="nc" id="L27">                counter.setCounter(1, new Date(Calendar.getInstance().getTimeInMillis() + (penalty * 60 * 1000)));</span>
+<span class="nc" id="L28">                log.info(&quot;value&quot; + counter.getNumber());</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            } else if (counter.getNumber() &lt;= count - 1)</span>
+<span class="nc" id="L30">                counter.setNumber(counter.getNumber() + 1);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">            else if (counter.getNumber() == count) {</span>
+<span class="nc" id="L32">                counter.setCounter(count + 1, new Date(Calendar.getInstance().getTimeInMillis() + (penalty * 60 * 1000)));</span>
+<span class="nc" id="L33">                log.info(&quot;Too many inputs..retry after&quot; + counter.getTargetDate());</span>
+<span class="nc" id="L34">                throw new RuntimeException(&quot;too much of  input in one minute...&quot;);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            } else if (counter.getNumber() &gt; count)</span>
+<span class="nc" id="L36">                throw new RuntimeException(&quot;too much of  input in one minute...&quot;);</span>
+<span class="nc" id="L37">            return counter;</span>
+        });
+<span class="nc" id="L39">        accessList.getAccessHistory().computeIfAbsent(ip, (counterObj) -&gt; {</span>
+<span class="nc" id="L40">            Counter counter = new Counter();</span>
+<span class="nc" id="L41">            counter.setCounter(1, new Date(Calendar.getInstance().getTimeInMillis() + (penalty * 60 * 1000)));</span>
+<span class="nc" id="L42">            log.info(&quot;accssed value&quot; + counter.getNumber());</span>
+<span class="nc" id="L43">            return counter;</span>
+        });
+<span class="nc" id="L45">    }</span>
+}
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

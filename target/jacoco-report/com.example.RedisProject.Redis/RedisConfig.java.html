@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedisConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">redis-project</a> &gt; <a href="index.source.html" class="el_package">com.example.RedisProject.Redis</a> &gt; <span class="el_source">RedisConfig.java</span></div><h1>RedisConfig.java</h1><pre class="source lang-java linenums">package com.example.RedisProject.Redis;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.*;
+
+@Configuration
+@EnableRedisRepositories(basePackages = {&quot;Redis.AccessListRepository&quot;,&quot; security.AccessList&quot;,&quot;Redis.FactoryInterface&quot;,&quot;Redis.FilterSelector&quot;,&quot;Redis.CustomImpl&quot;,&quot;Redis.RedisImpl&quot;})
+@PropertySource(&quot;classpath:application.properties&quot;)
+<span class="fc" id="L17">public class RedisConfig {</span>
+
+    @Value(&quot;${spring.redis.host}&quot;)
+    private String REDIS_HOST;
+
+    @Value(&quot;${spring.redis.port}&quot;)
+    private int REDIS_PORT;
+
+    @Bean
+  public  JedisConnectionFactory jedisConnectionFactory() {
+<span class="fc" id="L27">        RedisStandaloneConfiguration configuration=new RedisStandaloneConfiguration(REDIS_HOST,REDIS_PORT);</span>
+<span class="fc" id="L28">        JedisClientConfiguration jedisClientConfiguration= JedisClientConfiguration.builder().build();</span>
+<span class="fc" id="L29">        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(configuration,jedisClientConfiguration);</span>
+<span class="fc" id="L30">        return jedisConnectionFactory;</span>
+    }
+
+    @Bean(&quot;redis1&quot;)
+    public RedisTemplate&lt;String, Integer&gt; redis1redisTemplate() {
+<span class="fc" id="L35">        RedisTemplate&lt;String, Integer&gt; redis1redisTemplate = new RedisTemplate&lt;&gt;();</span>
+<span class="fc" id="L36">        redis1redisTemplate.setKeySerializer(new StringRedisSerializer());</span>
+<span class="fc" id="L37">        redis1redisTemplate.setHashKeySerializer(new GenericToStringSerializer&lt;String&gt;(String.class));</span>
+<span class="fc" id="L38">        redis1redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());</span>
+<span class="fc" id="L39">        redis1redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());</span>
+<span class="fc" id="L40">        redis1redisTemplate.setConnectionFactory(jedisConnectionFactory());</span>
+<span class="fc" id="L41">        return redis1redisTemplate;</span>
+    }
+    @Bean(&quot;redis2&quot;)
+    public RedisTemplate&lt;String, Integer&gt; redis2redisTemplate() {
+<span class="fc" id="L45">        RedisTemplate&lt;String, Integer&gt; redis2redisTemplate = new RedisTemplate&lt;&gt;();</span>
+<span class="fc" id="L46">        redis2redisTemplate.setKeySerializer(new StringRedisSerializer());</span>
+<span class="fc" id="L47">        redis2redisTemplate.setHashKeySerializer(new GenericToStringSerializer&lt;String&gt;(String.class));</span>
+<span class="fc" id="L48">        redis2redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());</span>
+<span class="fc" id="L49">        redis2redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());</span>
+<span class="fc" id="L50">        redis2redisTemplate.setConnectionFactory(jedisConnectionFactory());</span>
+<span class="fc" id="L51">        return redis2redisTemplate;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

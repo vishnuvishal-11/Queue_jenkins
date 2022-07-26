@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  apps:
+    container_name: docker-my-spring
+    image: spring-redis:v3
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8090:8090"
+    links:
+      - redis
+      - rabbitmq5
+    volumes:
+      - C:\Users\vishn\IdeaProjects\RedisProject\logs:/log
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    build: ./redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+
+  rabbitmq5:
+    container_name: rabbitmq
+    image: 'rabbitmq:3.10.5-management-alpine'
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+
+
+
