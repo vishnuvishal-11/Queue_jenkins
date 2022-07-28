@@ -14,7 +14,7 @@ import java.util.List;
 @Validated
 @Slf4j
 @Service
-@Component
+@Component("impl")
 public class Implementation<T> implements QueueInterface<T> {
     @Autowired
     private UserRequestRepository userRequestRepository;
