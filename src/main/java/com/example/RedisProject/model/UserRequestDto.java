@@ -32,7 +32,7 @@ public class UserRequestDto implements Serializable {
     int day;
     private int age = 0;
 
-    Calendar dob;
+    String dob;
 
     private Long id;
 
@@ -80,8 +80,7 @@ public class UserRequestDto implements Serializable {
         this.year = year;
         this.month = month;
     }
-    public UserRequestDto(Long id,String firstName,String lastName,  int age, @NotEmpty Calendar dob, String location) {
-        this.id=id;
+    public UserRequestDto(String firstName,String lastName,  int age, @NotEmpty String dob, String location) {
         this.firstName = firstName;
         this.lastName=lastName;
         this.age=age;
@@ -91,3 +90,4 @@ public class UserRequestDto implements Serializable {
     }
 
 }
+
