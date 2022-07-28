@@ -34,9 +34,10 @@ public class QueueClass {
     public void setQueuestring(String queuestring) {
         this.queuestring = queuestring;
     }
+    String queuestring;
 
     @Value("${dynamic.queue}")
-    private  String queuestring;
+    private  String queuetype;
 //    @Autowired
 //    @Qualifier("customqueue")
     private final QueueSelector queuecustom;
@@ -52,6 +53,7 @@ public class QueueClass {
 
     @GetMapping("/display")
     public List<UserRequestDto> display() {
+        queuestring=queuetype;
         List<UserRequest> findAll = queueInterface.display();
         return converter.entityToDto(findAll);
     }
@@ -59,6 +61,8 @@ public class QueueClass {
     @GetMapping("/size")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public int size() {
+        if(queuetype!=null)
+        queuestring=queuetype;
         int size = 0;
         if (queuestring.equalsIgnoreCase("rabbit")) {
             size = queuerabbit.size();
@@ -70,21 +74,27 @@ public class QueueClass {
 
     @PostMapping(value = "/enque", produces = {MediaType.APPLICATION_JSON_VALUE})
     @SneakyThrows
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public String enque(@Valid @RequestBody UserRequestDto userRequestDto) {
      //   if (converter.checkDateAndName(userRequestDto)) {
+        queuestring=queuetype;
+        log.info("1 "+queuestring);
+        log.info("2 "+queuetype);
             UserRequest userRequest= converter.dtoToEntity(userRequestDto);
-            if (queuestring==null || queuestring.equalsIgnoreCase("custom")) {
-                return    queuecustom.enque(userRequest);
+            if (queuestring.equalsIgnoreCase("rabbit")) {
+                return  queuerabbit.enque(userRequest);
+               // userRequest.getId();
             } else {
-                return    queuerabbit.enque(userRequest);
+                return  queuecustom.enque(userRequest);
+              //  return userRequest.getId();
             }
     }
 
     @DeleteMapping("/deque")
     public UserRequestDto deque() {
         Object deque = null;
+        queuestring=queuetype;
         try {
             if (queuestring.equalsIgnoreCase("rabbit")) {
                 deque = queuerabbit.deque();
