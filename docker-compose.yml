@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   apps:
-    container_name: docker-my-spring2
+    container_name: docker-my-spring3
     image: spring-redis:v3
     build: .
     env_file:
@@ -15,7 +15,7 @@ services:
       - C:\Users\vishn\IdeaProjects\RedisProject\logs:/log
 
   redis:
-    container_name: redis2
+    container_name: redis3
     image: redis:latest
     build: ./redis
     hostname: redis
@@ -23,7 +23,7 @@ services:
       - "6379:6379"
 
   rabbitmq5:
-    container_name: rabbitmq2
+    container_name: rabbitmq3
     image: 'rabbitmq:3.10.5-management-alpine'
     ports:
         - "5672:5672"
