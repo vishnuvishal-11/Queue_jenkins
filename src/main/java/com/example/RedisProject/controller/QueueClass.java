@@ -24,7 +24,7 @@ public class QueueClass {
     private final QueueInterface queueInterface;
 
 
-    public QueueClass( @Qualifier("customqueue")QueueSelector queuecustom, @Qualifier("rabbitq") QueueSelector queuerabbit,@Qualifier("convert") Converter converter,QueueInterface queueInterface) {
+    public QueueClass( @Qualifier("customqueue")QueueSelector queuecustom, @Qualifier("rabbitq") QueueSelector queuerabbit,@Qualifier("convert") Converter converter,@Qualifier("impl")QueueInterface queueInterface) {
      this.converter=converter;
         this.queuecustom = queuecustom;
         this.queuerabbit = queuerabbit;
