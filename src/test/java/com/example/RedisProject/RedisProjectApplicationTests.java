@@ -8,7 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class RedisProjectApplicationTests {
-
+	
+        @Disabled
 	@Test
 	void contextLoads()throws Exception {
 	}
