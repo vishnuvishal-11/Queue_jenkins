@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class CustomQueue implements QueueSelector {
 
 
-    public CustomQueue(QueueInterface queueInterface) {
+    public CustomQueue(@Qualifier("impl")QueueInterface queueInterface) {
        this.queueInterface=queueInterface;
     }
 
