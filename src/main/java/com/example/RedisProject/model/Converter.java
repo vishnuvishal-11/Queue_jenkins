@@ -19,11 +19,8 @@ public class Converter {
         String[] arrOfStr = userRequest.getUserName().split("_");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String strDate=userRequest.getDob().replaceAll("00:00:00 GMT","");
-        Date date = sdf.parse(strDate);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return new UserRequestDto(userRequest.getId(), arrOfStr[0],arrOfStr[1],
-                userRequest.getAge(),cal, userRequest.getLocation());
+        return new UserRequestDto( arrOfStr[0],arrOfStr[1],
+                userRequest.getAge(),strDate, userRequest.getLocation());
     }
 
     public List<UserRequestDto> entityToDto(List<UserRequest> userRequest) {
@@ -42,10 +39,10 @@ public class Converter {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar dob = Calendar.getInstance();
         dob.setTime(sdf.parse(date));
-        userRequestDto.setDob(dob);
+        userRequestDto.setDob(dob.toString());
         UserRequestDto userRequestDto1 = new UserRequestDto(userRequestDto.getFirstName(), userRequestDto.getLastName(),
                 userRequestDto.getLocation(), userRequestDto.getYear(), userRequestDto.getMonth(), userRequestDto.getDay(),
-                Converter.calculateAge(userRequestDto.getDob()),dob);
+                Converter.calculateAge(dob),dob);
 
         String name = userRequestDto.getFirstName().replaceAll("_", "-") + "_" +
                 userRequestDto.getLastName().replaceAll("_", "-");
