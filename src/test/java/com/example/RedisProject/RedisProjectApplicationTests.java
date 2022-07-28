@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class RedisProjectApplicationTests {
 	
-        @Disabled
+//         @Disabled
 	@Test
 	void contextLoads()throws Exception {
 	}
