@@ -11,7 +11,7 @@ pipeline {
       		   stage('Build') {
             steps {
             
-                git branch: 'main', url: 'https://github.com/vishnuvishal-11/Queue_jenkins'
+                git branch: 'second', url: 'https://github.com/vishnuvishal-11/Queue_jenkins'
                  bat 'mvn clean install -Dmaven.test.skip=true '
             }
         }
@@ -25,7 +25,7 @@ pipeline {
             steps {  
                 echo 'docker image is building'
                  bat 'docker logout'
-                bat 'docker build -f Dockerfile -t spring10 .'
+                bat 'docker build -f Dockerfile -t spring11 .'
                  echo 'docker image is build sucessfully'
              }
         }
@@ -34,9 +34,9 @@ pipeline {
         post {
   success {
        bat 'docker logout'
-       bat 'docker tag spring10  vishnu11docker/firstdockerrepo:spring10'
+       bat 'docker tag spring10  vishnu11docker/firstdockerrepo:spring11'
         bat 'docker login -u vishnu11docker -p dckr_pat_-L7y2OMAWIx_ejVjTyo6XF0X5sk'
-        bat 'docker push vishnu11docker/firstdockerrepo:spring10'
+        bat 'docker push vishnu11docker/firstdockerrepo:spring11'
          bat 'docker logout'
           echo 'docker image is pushed to remote repo sucessfully'
     
